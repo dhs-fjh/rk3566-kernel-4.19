@@ -36,52 +36,53 @@
 	chosen: chosen {
 		// EMMC
 		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=PARTUUID=614e0000-0000 rw rootwait";
-		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 cma=128M rw rootwait";
+		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 cma=512M rw rootwait";
 
 		// SD
 		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk1p4 rw rootwait";
 	};
-	
+
+
 	leds: leds {
 		compatible = "gpio-leds";
 		// 自制版配置
-		// rgb_led_r: rgb-led-r {
-		// 	gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
-		// 	linux,default-trigger = "none";
-		// };
-		// rgb_led_g: rgb-led-g {
-		// 	gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
-		// 	linux,default-trigger = "none";
-		// };
-		// rgb_led_b: rgb-led-b {
-		// 	gpios = <&gpio1 RK_PA6 GPIO_ACTIVE_LOW>;
-		// 	linux,default-trigger = "none";
-		// };
-
-		// rgb2_led_r: rgb2-led-r {
-		// 	gpios = <&gpio1 RK_PA5 GPIO_ACTIVE_LOW>;
-		// 	linux,default-trigger = "none";
-		// };
-		// rgb2_led_g: rgb2-led-g {
-		// 	gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_LOW>;
-		// 	linux,default-trigger = "none";
-		// };
-		// rgb2_led_b: rgb2-led-b {
-		// 	gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
-		// 	linux,default-trigger = "none";
-		// };
-
-		// 泰山派配置
 		rgb_led_r: rgb-led-r {
-			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
 		};
 		rgb_led_g: rgb-led-g {
-			gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
-
+			gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
 		};
 		rgb_led_b: rgb-led-b {
-			gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio1 RK_PA6 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
 		};
+
+		rgb2_led_r: rgb2-led-r {
+			gpios = <&gpio1 RK_PA5 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+		};
+		rgb2_led_g: rgb2-led-g {
+			gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+		};
+		rgb2_led_b: rgb2-led-b {
+			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+		};
+
+		// 泰山派配置
+		// rgb_led_r: rgb-led-r {
+		// 	gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
+		// };
+		// rgb_led_g: rgb-led-g {
+		// 	gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
+
+		// };
+		// rgb_led_b: rgb-led-b {
+		// 	gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
+		// };
 	};
 };
 
