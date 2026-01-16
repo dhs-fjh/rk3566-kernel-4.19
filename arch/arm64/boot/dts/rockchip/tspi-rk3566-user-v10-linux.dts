@@ -46,31 +46,31 @@
 	leds: leds {
 		compatible = "gpio-leds";
 		// 自制版配置
-		rgb_led_r: rgb-led-r {
-			gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "none";
-		};
-		rgb_led_g: rgb-led-g {
-			gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "none";
-		};
-		rgb_led_b: rgb-led-b {
-			gpios = <&gpio1 RK_PA6 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "none";
-		};
+		// rgb_led_r: rgb-led-r {
+		// 	gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
+		// 	linux,default-trigger = "none";
+		// };
+		// rgb_led_g: rgb-led-g {
+		// 	gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
+		// 	linux,default-trigger = "none";
+		// };
+		// rgb_led_b: rgb-led-b {
+		// 	gpios = <&gpio1 RK_PA6 GPIO_ACTIVE_LOW>;
+		// 	linux,default-trigger = "none";
+		// };
 
-		rgb2_led_r: rgb2-led-r {
-			gpios = <&gpio1 RK_PA5 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "none";
-		};
-		rgb2_led_g: rgb2-led-g {
-			gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "none";
-		};
-		rgb2_led_b: rgb2-led-b {
-			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "none";
-		};
+		// rgb2_led_r: rgb2-led-r {
+		// 	gpios = <&gpio1 RK_PA5 GPIO_ACTIVE_LOW>;
+		// 	linux,default-trigger = "none";
+		// };
+		// rgb2_led_g: rgb2-led-g {
+		// 	gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_LOW>;
+		// 	linux,default-trigger = "none";
+		// };
+		// rgb2_led_b: rgb2-led-b {
+		// 	gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
+		// 	linux,default-trigger = "none";
+		// };
 
 		// 泰山派配置
 		// rgb_led_r: rgb-led-r {
@@ -91,3 +91,84 @@
 	status = "okay";
 	// status = "disable";
 };
+
+
+
+
+// &spi3 {
+//     status = "okay";
+
+// 	pinctrl-names = "default";
+// 	pinctrl-0 = <&spi3m1_pins>;
+
+//     num-cs = <2>;
+// 	// 泰山派
+//     cs-gpios = <
+//         &gpio3 RK_PA6 GPIO_ACTIVE_LOW   // CS0
+//         &gpio4 RK_PC6 GPIO_ACTIVE_LOW   // CS1
+//     >;
+
+
+//     spidev@0 {
+//         compatible = "spidev";
+//         reg = <0>;                     // 对应 CS0
+//         spi-max-frequency = <500000>;
+//     };
+
+//     spidev@1 {
+//         compatible = "spidev";
+//         reg = <1>;                     // 对应 CS1
+//         spi-max-frequency = <500000>;
+//     };
+// };
+
+
+// &spi1 {
+//     status = "okay";
+
+// 	pinctrl-names = "default";
+// 	pinctrl-0 = <&spi1m1_pins>;
+
+//     num-cs = <2>;
+// 	// 自制板
+// 	cs-gpios = <
+//         &gpio3 RK_PC0 GPIO_ACTIVE_LOW   // CS0
+//         &gpio3 RK_PB7 GPIO_ACTIVE_LOW   // CS1
+//     >;
+
+//     spidev@0 {
+//         compatible = "spidev";
+//         reg = <0>;                     // 对应 CS0
+//         spi-max-frequency = <500000>;
+//     };
+
+//     spidev@1 {
+//         compatible = "spidev";
+//         reg = <1>;                     // 对应 CS1
+//         spi-max-frequency = <500000>;
+//     };
+// };
+
+
+
+// &i2c2 {
+// 	status = "okay";
+// 	pinctrl-names = "default";
+// 	pinctrl-0 = <&i2c2m0_xfer>;
+// 	//添加你的I2C设备参考
+// 	// gt1x: gt1x@14 {
+// 	// 	compatible = "goodix,gt1x";
+// 	// 	reg = <0x14>;
+// 	// 	pinctrl-names = "default";
+// 	// 	pinctrl-0 = <&touch_gpio>;
+// 	// 	goodix,rst-gpio = <&gpio0 RK_PB6 GPIO_ACTIVE_HIGH>;
+// 	// 	goodix,irq-gpio = <&gpio0 RK_PB5 IRQ_TYPE_LEVEL_LOW>;
+// 	// };
+// };
+
+
+// &i2c3 {
+// 	status = "okay";
+// 	pinctrl-names = "default";
+// 	pinctrl-0 = <&i2c3m1_xfer>;
+// };
