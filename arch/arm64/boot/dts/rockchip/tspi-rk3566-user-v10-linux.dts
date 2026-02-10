@@ -38,8 +38,9 @@
 		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=PARTUUID=614e0000-0000 rw rootwait";
 		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 cma=512M rw rootwait";
 
+			// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 rootfstype=squashfs ro rootwait cma=512M";
 		// SD
-		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk1p4 rw rootwait";
+		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk1p4 cma=512M rw rootwait";
 	};
 
 
@@ -59,18 +60,18 @@
 		// 	linux,default-trigger = "none";
 		// };
 
-		// rgb2_led_r: rgb2-led-r {
-		// 	gpios = <&gpio1 RK_PA5 GPIO_ACTIVE_LOW>;
-		// 	linux,default-trigger = "none";
-		// };
-		// rgb2_led_g: rgb2-led-g {
-		// 	gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_LOW>;
-		// 	linux,default-trigger = "none";
-		// };
-		// rgb2_led_b: rgb2-led-b {
-		// 	gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
-		// 	linux,default-trigger = "none";
-		// };
+		rgb2_led_r: rgb2-led-r {
+			gpios = <&gpio1 RK_PA5 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+		};
+		rgb2_led_g: rgb2-led-g {
+			gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+		};
+		rgb2_led_b: rgb2-led-b {
+			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+		};
 
 		// 泰山派配置
 		// rgb_led_r: rgb-led-r {
