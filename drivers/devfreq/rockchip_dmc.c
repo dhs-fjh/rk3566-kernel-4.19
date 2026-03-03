@@ -473,6 +473,9 @@ static int rockchip_dmcfreq_target(struct device *dev, unsigned long *freq,
 		// dev_err(dev, "cpu%d policy NULL\n", cpu_cur);
 		goto cpufreq;
 	}
+	// else{ // 调压策略生效测试打印
+	// 	dev_err(dev, "cpu%d policy not NULL\n", cpu_cur);
+	// }
 	down_write(&policy->rwsem);
 	cpufreq_cur = cpufreq_quick_get(cpu_cur);
 

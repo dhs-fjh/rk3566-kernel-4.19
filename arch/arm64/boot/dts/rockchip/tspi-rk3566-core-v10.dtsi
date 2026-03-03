@@ -238,11 +238,11 @@
 };
 
 //npu总线
-&bus_npu {
-	bus-supply = <&vdd_logic>;
-	pvtm-supply = <&vdd_cpu>;
-	status = "okay";
-};
+// &bus_npu {
+// 	bus-supply = <&vdd_logic>;
+// 	pvtm-supply = <&vdd_cpu>;
+// 	status = "okay";
+// };
 
 //can0接口
 &can0 {
@@ -270,6 +270,9 @@
 };
 
 //cpu0
+// &cpu0 {
+// 	cpu-supply = <&vdd_logic>;
+// };
 &cpu0 {
 	cpu-supply = <&vdd_cpu>;
 };
@@ -838,6 +841,7 @@
 //hostusb3.0
 &usbdrd30 {
 	status = "okay";
+	// dr_mode = "host";  // 强制启用 USB 2.0 模式 没用
 };
 
 &combphy1_usq {
