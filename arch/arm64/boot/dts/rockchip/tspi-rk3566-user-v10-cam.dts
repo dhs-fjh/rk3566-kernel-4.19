@@ -1,0 +1,92 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2020 Rockchip Electronics Co., Ltd.
+ *
+ */
+
+ /*********************************************************************
+ *           立创开发板不靠卖板赚钱，以培养中国工程师为己任  
+ *         泰山派软硬件资料与相关扩展板软硬件资料官网全部开源
+ *                      开发板官网：www.lckfb.com            
+ *                     立创论坛：oshwhub.com/forum           
+ *            关注B站：【立创开发板】，掌握我们的最新动态！  
+ *********************************************************************
+ * 文件名：tspi-rk3566-user-v10.dtsi
+ * 描述：用户自定义层
+ * 更新:
+ * 时间          作者           联系           说明
+ * 2023-09-13   吴才成    1378913492@qq.com   v1.0.0
+ *********************************************************************/
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/display/media-bus-format.h>
+#include <dt-bindings/pinctrl/rockchip.h>
+#include "rk3566.dtsi"
+#include <dt-bindings/display/rockchip_vop.h>
+
+
+//tspi核心配置层，这里是几乎后期不需要怎么改动
+#include "tspi-rk3566-core-v10.dtsi"
+
+/ {
+	model = "lckfb tspi V10 Board";
+	compatible = "lckfb,tspi-v10", "rockchip,rk3566";
+
+	chosen: chosen {
+		// EMMC
+		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=PARTUUID=614e0000-0000 rw rootwait";
+		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 cma=512M rw rootwait";
+
+		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 rootfstype=squashfs ro rootwait cma=512M";
+		// SD
+		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk1p4 cma=512M rw rootwait";
+	};
+
+	leds: leds {
+		compatible = "gpio-leds";
+		// 自制版配置
+		rgb_led_r: rgb-led-r {
+			gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+		};
+		rgb_led_g: rgb-led-g {
+			gpios = <&gpio1 RK_PA6 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+		};
+		rgb_led_b: rgb-led-b {
+			gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+		};
+
+		rgb2_led_r: rgb2-led-r {
+			gpios = <&gpio1 RK_PA5 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "timer";
+			linux,delay-reg = <0>;   		// 延时注册
+			linux,blink-delay-on = <500>; 	// 打开时间
+			linux,blink-delay-off = <500>;	// 关闭时间
+		};
+		rgb2_led_g: rgb2-led-g {
+			gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "timer";
+			linux,delay-reg = <100>;   		// 延时注册
+			linux,blink-delay-on = <1000>; 
+			linux,blink-delay-off = <1000>;
+		};
+		rgb2_led_b: rgb2-led-b {
+			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "timer";
+			linux,delay-reg = <100>;  		// 延时注册
+			linux,blink-delay-on = <1500>; 
+			linux,blink-delay-off = <1500>;
+		};
+
+	};
+
+};
+
+//用户三色灯
+&leds {
+	status = "okay";
+	// status = "disable";
+};
