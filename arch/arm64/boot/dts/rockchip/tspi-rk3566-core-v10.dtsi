@@ -277,11 +277,11 @@
 };
 
 //npu总线
-// &bus_npu {
-// 	bus-supply = <&vdd_logic>;
-// 	pvtm-supply = <&vdd_cpu>;
-// 	status = "okay";
-// };
+&bus_npu {
+	bus-supply = <&vdd_logic>;
+	pvtm-supply = <&vdd_cpu>;
+	status = "okay";
+};
 
 //can0接口
 &can0 {
@@ -372,7 +372,6 @@
 		wakeup-source;
 		#clock-cells = <1>;
 		clock-output-names = "rk808-clkout1", "rk808-clkout2";
-		//fb-inner-reg-idxs = <2>;
 		/* 1: rst regs (default in codes), 0: rst the pmic */
 		pmic-reset-func = <0>;
 		/* not save the PMIC_POWER_EN register in uboot */
@@ -612,8 +611,8 @@
 			assigned-clock-parents = <&cru I2S1_MCLKOUT_TX>, <&cru I2S1_MCLKOUT_TX>;
 			pinctrl-names = "default";
 			pinctrl-0 = <&i2s1m0_mclk>;
-			hp-volume = <20>;
-			spk-volume = <3>;
+			hp-volume = <20>;  // 可调整范围：0-31
+			spk-volume = <31>;  // 可调整范围：0-31
 			mic-in-differential;
 			status = "okay";
 		};
