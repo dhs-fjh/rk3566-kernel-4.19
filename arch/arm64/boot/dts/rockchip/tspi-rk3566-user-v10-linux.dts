@@ -35,55 +35,89 @@
 
 	chosen: chosen {
 		// EMMC
-		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=PARTUUID=614e0000-0000 rw rootwait";
-		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 cma=512M rw rootwait";
+		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=PARTUUID=614e0000-0000 rw rootwait";
+		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 cma=512M rw rootwait";
 
 			// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 rootfstype=squashfs ro rootwait cma=512M";
 		// SD
 		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk1p4 cma=512M rw rootwait";
 	};
 
+	// 耳机
+	rk_headset: rk-headset {
+		compatible = "rockchip_headset";
+		headset_gpio = <&gpio0 RK_PC5 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&hp_det>;
+	};
+
 
 	leds: leds {
 		compatible = "gpio-leds";
-		// 自制版配置
-		// rgb_led_r: rgb-led-r {
-		// 	gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
-		// 	linux,default-trigger = "none";
-		// };
-		// rgb_led_g: rgb-led-g {
-		// 	gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
-		// 	linux,default-trigger = "none";
-		// };
-		// rgb_led_b: rgb-led-b {
-		// 	gpios = <&gpio1 RK_PA6 GPIO_ACTIVE_LOW>;
-		// 	linux,default-trigger = "none";
-		// };
-
-		rgb2_led_r: rgb2-led-r {
-			gpios = <&gpio1 RK_PA5 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "none";
-		};
-		rgb2_led_g: rgb2-led-g {
-			gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "none";
-		};
-		rgb2_led_b: rgb2-led-b {
-			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "none";
-		};
-
 		// 泰山派配置
-		// rgb_led_r: rgb-led-r {
-		// 	gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
-		// };
-		// rgb_led_g: rgb-led-g {
-		// 	gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
+		rgb_led_r: rgb-led-r {
+			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
+			// linux,default-trigger = "none";
+			// default-state = "on";
+			linux,default-trigger = "timer";
+			linux,delay-reg = <0>;   		// 延时注册
+			linux,blink-delay-on = <500>; 	// 打开时间
+			linux,blink-delay-off = <500>;	// 关闭时间
+		};
+		rgb_led_g: rgb-led-g {
+			gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
+			// linux,default-trigger = "none";
+			// default-state = "on";
+			linux,default-trigger = "timer";
+			linux,delay-reg = <0>;  		// 延时注册
+			linux,blink-delay-on = <1000>; 
+			linux,blink-delay-off = <1000>;
 
-		// };
-		// rgb_led_b: rgb-led-b {
-		// 	gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
-		// };
+		};
+		rgb_led_b: rgb-led-b {
+			gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
+			// linux,default-trigger = "none";
+			// default-state = "on";
+			linux,default-trigger = "timer";
+			linux,delay-reg = <0>;  		// 延时注册
+			linux,blink-delay-on = <2000>; 
+			linux,blink-delay-off = <2000>;
+		};
+	};
+
+	/*
+	 * INMP441 I2S 数字麦克风 → 录音声卡（Linux 下可用 arecord / PulsePipe 等直接采集）
+	 *
+	 * 硬件接线（模块丝印 → SoC I2S3 M0）:
+	 *   VDD → 3.3 V    GND → GND
+	 *   SCK → I2S3_SCLK_M0 (BCLK)    WS → I2S3_LRCK_M0 (LRCK)
+	 *   SD  → I2S3_SDI_M0（麦克风数字输出接 SoC 接收）
+	 *   L/R → GND 为左声道时隙；接 VDD 为右声道时隙
+	 *   I2S3_MCLK_M0：建议在 pinctrl 中使能（模块常见 breakout 无 MCLK 引脚时可不接芯片侧）
+	 *   I2S3_SDO_M0：纯麦克风录音可不连接
+	 *
+	 * 注意：若启用 core 中的 audiopwmout-diff（I2S3 + dig_acodec），与本节点共用 I2S3 会冲突。
+	 */
+	inmp441_codec: inmp441-codec {
+		compatible = "rockchip,dummy-codec";
+		#sound-dai-cells = <0>;
+	};
+
+	inmp441_sound: inmp441-sound {
+		status = "okay";
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "INMP441";
+		simple-audio-card,format = "i2s";
+		simple-audio-card,mclk-fs = <256>;
+		/* SoC 输出 BCLK/LRCK/MCLK，INMP441 作 I2S slave */
+		simple-audio-card,bitclock-master = <&inmp441_cpu>;
+		simple-audio-card,frame-master = <&inmp441_cpu>;
+		inmp441_cpu: simple-audio-card,cpu {
+			sound-dai = <&i2s3_2ch>;
+		};
+		simple-audio-card,codec {
+			sound-dai = <&inmp441_codec>;
+		};
 	};
 };
 
@@ -94,78 +128,91 @@
 };
 
 
+// 耳机插入检测，不使用扩展板情况需关闭，否则默认会检测到耳机插入
+&rk_headset {
+	status = "okay";
+};
+&pinctrl {
+	headphone {
+		hp_det: hp-det {
+			rockchip,pins = <0 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+};
+
 
 
 // &spi3 {
-//     status = "okay";
+// 	status = "okay";
 
 // 	pinctrl-names = "default";
 // 	pinctrl-0 = <&spi3m1_pins>;
 
-//     num-cs = <2>;
-// 	// 泰山派
-//     cs-gpios = <
-//         &gpio3 RK_PA6 GPIO_ACTIVE_LOW   // CS0
-//         &gpio4 RK_PC6 GPIO_ACTIVE_LOW   // CS1
-//     >;
+// 	num-cs = <2>;
+// 	// 鲁班猫
+// 	cs-gpios = <
+// 			&gpio3 RK_PA4 GPIO_ACTIVE_LOW   // CS0
+// 			&gpio3 RK_PA5 GPIO_ACTIVE_LOW   // CS1
+// 	>;
 
 
-//     spidev@0 {
-//         compatible = "spidev";
-//         reg = <0>;                     // 对应 CS0
-//         spi-max-frequency = <500000>;
-//     };
+// 	spidev@0 {
+// 			compatible = "spidev";
+// 			reg = <0>;                     // 对应 CS0
+// 			spi-max-frequency = <500000>;
+// 	};
 
-//     spidev@1 {
-//         compatible = "spidev";
-//         reg = <1>;                     // 对应 CS1
-//         spi-max-frequency = <500000>;
-//     };
+// 	spidev@1 {
+// 			compatible = "spidev";
+// 			reg = <1>;                     // 对应 CS1
+// 			spi-max-frequency = <500000>;
+// 	};
 // };
 
 
 // &spi1 {
-//     status = "okay";
+// 	status = "okay";
 
 // 	pinctrl-names = "default";
 // 	pinctrl-0 = <&spi1m1_pins>;
 
-//     num-cs = <2>;
+// 	num-cs = <2>;
 // 	// 自制板
 // 	cs-gpios = <
 //         &gpio3 RK_PC0 GPIO_ACTIVE_LOW   // CS0
 //         &gpio3 RK_PB7 GPIO_ACTIVE_LOW   // CS1
-//     >;
+// 	>;
 
-//     spidev@0 {
-//         compatible = "spidev";
-//         reg = <0>;                     // 对应 CS0
-//         spi-max-frequency = <500000>;
-//     };
+// 	spidev@0 {
+// 			compatible = "spidev";
+// 			reg = <0>;                     // 对应 CS0-acc
+// 			spi-max-frequency = <100000>;
+// 	};
 
-//     spidev@1 {
-//         compatible = "spidev";
-//         reg = <1>;                     // 对应 CS1
-//         spi-max-frequency = <500000>;
-//     };
+// 	spidev@1 {
+// 			compatible = "spidev";
+// 			reg = <1>;                     // 对应 CS1-gyro
+// 			spi-max-frequency = <100000>;
+// 	};
 // };
 
 
 
-// &i2c2 {
-// 	status = "okay";
-// 	pinctrl-names = "default";
-// 	pinctrl-0 = <&i2c2m0_xfer>;
-// 	//添加你的I2C设备参考
-// 	// gt1x: gt1x@14 {
-// 	// 	compatible = "goodix,gt1x";
-// 	// 	reg = <0x14>;
-// 	// 	pinctrl-names = "default";
-// 	// 	pinctrl-0 = <&touch_gpio>;
-// 	// 	goodix,rst-gpio = <&gpio0 RK_PB6 GPIO_ACTIVE_HIGH>;
-// 	// 	goodix,irq-gpio = <&gpio0 RK_PB5 IRQ_TYPE_LEVEL_LOW>;
-// 	// };
-// };
+&i2c2 {
+	status = "okay";
+	clock-frequency = <1000000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c2m0_xfer>;
+	//添加你的I2C设备参考
+	// gt1x: gt1x@14 {
+	// 	compatible = "goodix,gt1x";
+	// 	reg = <0x14>;
+	// 	pinctrl-names = "default";
+	// 	pinctrl-0 = <&touch_gpio>;
+	// 	goodix,rst-gpio = <&gpio0 RK_PB6 GPIO_ACTIVE_HIGH>;
+	// 	goodix,irq-gpio = <&gpio0 RK_PB5 IRQ_TYPE_LEVEL_LOW>;
+	// };
+};
 
 
 // &i2c3 {
@@ -173,3 +220,27 @@
 // 	pinctrl-names = "default";
 // 	pinctrl-0 = <&i2c3m1_xfer>;
 // };
+
+/* I2S3 M0：INMP441 双工引脚组（SDO 可悬空不接） */
+&i2s3_2ch {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2s3m0_mclk
+		     &i2s3m0_sclk
+		     &i2s3m0_lrck
+		     &i2s3m0_sdi
+		     &i2s3m0_sdo>;
+	rockchip,clk-trcm = <1>;
+};
+
+/* 勿与 inmp441_sound 同时使用 I2S3 */
+&audiopwmout_diff {
+	status = "disabled";
+};
+
+/* UART3 M1: UART3_TX_M1 / UART3_RX_M1 */
+&uart3 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart3m1_xfer>;
+};

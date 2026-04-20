@@ -48,35 +48,15 @@
 		// 自制版配置
 		rgb_led_r: rgb-led-r {
 			gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "none";
-			// default-state = "on";
-			// linux,default-trigger = "timer";
-			// linux,delay-reg = <0>;  		// 延时注册
-			// linux,blink-delay-on = <500>; 
-			// linux,blink-delay-off = <500>;
+			// linux,default-trigger = "none";
+			// default-state = "off";
+			linux,default-trigger = "timer";
+			linux,delay-reg = <0>;  		// 延时注册
+			linux,blink-delay-on = <50>; 
+			linux,blink-delay-off = <50>;
 		};
-		rgb_led_b: rgb-led-g {
-			gpios = <&gpio1 RK_PA6 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "none";
-			// default-state = "on";
-			// linux,default-trigger = "timer";
-			// linux,delay-reg = <0>;  		// 延时注册
-			// linux,blink-delay-on = <2000>; 
-			// linux,blink-delay-off = <2000>;
-		};
-		rgb_led_g: rgb-led-b {
-			gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
-			linux,default-trigger = "none";
-			// default-state = "on";
-			// linux,default-trigger = "timer";
-			// linux,delay-reg = <0>;  		// 延时注册
-			// linux,blink-delay-on = <1000>; 
-			// linux,blink-delay-off = <1000>;
-		};
-
-
-		rgb2_led_r: rgb2-led-r {
-			gpios = <&gpio1 RK_PA5 GPIO_ACTIVE_LOW>;
+		rgb_led_g: rgb-led-g {
+			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
 			// linux,default-trigger = "none";
 			// default-state = "off";
 			linux,default-trigger = "timer";
@@ -84,8 +64,8 @@
 			linux,blink-delay-on = <100>; 
 			linux,blink-delay-off = <100>;
 		};
-		rgb2_led_g: rgb2-led-g {
-			gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_LOW>;
+		rgb_led_b: rgb-led-b {
+			gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
 			// linux,default-trigger = "none";
 			// default-state = "off";
 			linux,default-trigger = "timer";
@@ -93,14 +73,33 @@
 			linux,blink-delay-on = <200>; 
 			linux,blink-delay-off = <200>;
 		};
+
+		rgb2_led_r: rgb2-led-r {
+			gpios = <&gpio2 RK_PC2 GPIO_ACTIVE_LOW>;
+			// linux,default-trigger = "none";
+			// default-state = "off";
+			linux,default-trigger = "timer";
+			linux,delay-reg = <0>;  		// 延时注册
+			linux,blink-delay-on = <50>; 
+			linux,blink-delay-off = <50>;
+		};
+		rgb2_led_g: rgb2-led-g {
+			gpios = <&gpio2 RK_PB0 GPIO_ACTIVE_LOW>;
+			// linux,default-trigger = "none";
+			// default-state = "off";
+			linux,default-trigger = "timer";
+			linux,delay-reg = <0>;  		// 延时注册
+			linux,blink-delay-on = <100>; 
+			linux,blink-delay-off = <100>;
+		};
 		rgb2_led_b: rgb2-led-b {
-			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio2 RK_PC6 GPIO_ACTIVE_LOW>;
 			// linux,default-trigger = "none";
 			// default-state = "on";
 			linux,default-trigger = "timer";
 			linux,delay-reg = <0>;  		// 延时注册
-			linux,blink-delay-on = <400>; 
-			linux,blink-delay-off = <400>;
+			linux,blink-delay-on = <200>; 
+			linux,blink-delay-off = <200>;
 		};
 
 	};
@@ -111,4 +110,41 @@
 &leds {
 	status = "okay";
 	// status = "disable";
+};
+
+
+&i2c2 {
+	status = "okay";
+	clock-frequency = <100000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c2m1_xfer>;
+};
+
+
+
+&i2c3 {
+	status = "okay";
+	clock-frequency = <100000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c3m1_xfer>;
+};
+
+/*
+ * BMI088 等 I2C 器件地址选择：A0 需为低（下拉）。
+ * 原理图网络 A0_GYRO-3B3、A0_ACCEL-3B4 -> GPIO3_PB3、GPIO3_PB4
+ */
+&gpio3 {
+	a0_gyro: a0-gyro {
+		gpio-hog;
+		gpios = <RK_PB3 GPIO_ACTIVE_HIGH>;
+		line-name = "A0_GYRO";
+		output-high;
+	};
+
+	a0_accel: a0-accel {
+		gpio-hog;
+		gpios = <RK_PB4 GPIO_ACTIVE_HIGH>;
+		line-name = "A0_ACCEL";
+		output-high;
+	};
 };
