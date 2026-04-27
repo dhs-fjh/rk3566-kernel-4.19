@@ -48,30 +48,30 @@
 		// 自制版配置
 		rgb_led_r: rgb-led-r {
 			gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
-			// linux,default-trigger = "none";
-			// default-state = "off";
-			linux,default-trigger = "timer";
-			linux,delay-reg = <0>;  		// 延时注册
-			linux,blink-delay-on = <50>; 
-			linux,blink-delay-off = <50>;
+			linux,default-trigger = "none";
+			default-state = "off";
+			// linux,default-trigger = "timer";
+			// linux,delay-reg = <0>;  		// 延时注册
+			// linux,blink-delay-on = <50>; 
+			// linux,blink-delay-off = <50>;
 		};
 		rgb_led_g: rgb-led-g {
-			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
-			// linux,default-trigger = "none";
-			// default-state = "off";
-			linux,default-trigger = "timer";
-			linux,delay-reg = <0>;  		// 延时注册
-			linux,blink-delay-on = <100>; 
-			linux,blink-delay-off = <100>;
+			gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+			default-state = "off";
+			// linux,default-trigger = "timer";
+			// linux,delay-reg = <0>;  		// 延时注册
+			// linux,blink-delay-on = <100>; 
+			// linux,blink-delay-off = <100>;
 		};
 		rgb_led_b: rgb-led-b {
-			gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
-			// linux,default-trigger = "none";
-			// default-state = "off";
-			linux,default-trigger = "timer";
-			linux,delay-reg = <0>;  		// 延时注册
-			linux,blink-delay-on = <200>; 
-			linux,blink-delay-off = <200>;
+			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+			default-state = "off";
+			// linux,default-trigger = "timer";
+			// linux,delay-reg = <0>;  		// 延时注册
+			// linux,blink-delay-on = <200>; 
+			// linux,blink-delay-off = <200>;
 		};
 
 		rgb2_led_r: rgb2-led-r {
