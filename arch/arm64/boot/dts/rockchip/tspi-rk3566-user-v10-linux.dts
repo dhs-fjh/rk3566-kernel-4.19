@@ -124,7 +124,6 @@
 //用户三色灯
 &leds {
 	status = "okay";
-	// status = "disable";
 };
 
 
@@ -138,6 +137,18 @@
 			rockchip,pins = <0 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
+
+	tft {
+		tft_dc: tft-dc {
+			rockchip,pins = <3 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+		tft_bl: tft-bl {
+			rockchip,pins = <3 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+		tft_rst: tft-rst {
+			rockchip,pins = <3 RK_PC3 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
 };
 
 
@@ -146,20 +157,28 @@
 // 	status = "okay";
 
 // 	pinctrl-names = "default";
-// 	pinctrl-0 = <&spi3m1_pins>;
+// 	pinctrl-0 = <&spi3m1_pins &tft_dc &tft_bl &tft_rst>;
 
 // 	num-cs = <2>;
-// 	// 鲁班猫
+// 	// 泰山派
 // 	cs-gpios = <
 // 			&gpio3 RK_PA4 GPIO_ACTIVE_LOW   // CS0
 // 			&gpio3 RK_PA5 GPIO_ACTIVE_LOW   // CS1
 // 	>;
 
-
-// 	spidev@0 {
-// 			compatible = "spidev";
+// 	st7789v@0 {
+// 			compatible = "sitronix,st7789v";
 // 			reg = <0>;                     // 对应 CS0
-// 			spi-max-frequency = <500000>;
+// 			spi-max-frequency = <1000000>;
+// 			width = <240>;
+// 			height = <240>;
+// 			rotate = <0>;
+// 			bgr;
+// 			fps = <30>;
+// 			buswidth = <8>;
+// 			dc-gpios = <&gpio3 RK_PB3 GPIO_ACTIVE_HIGH>;
+// 			reset-gpios = <&gpio3 RK_PC3 GPIO_ACTIVE_HIGH>;
+// 			//led-gpios = <&gpio3 RK_PB4 GPIO_ACTIVE_HIGH>;
 // 	};
 
 // 	spidev@1 {
@@ -215,6 +234,35 @@
 };
 
 
+&i2c3 {
+	status = "okay";
+};
+
+
+/* 0.91" OLED on I2C5 (SDA/SCL M0), usually address 0x3c */
+&i2c5 {
+	status = "okay";
+	clock-frequency = <400000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c5m0_xfer>;
+
+	oled@3c {
+		compatible = "solomon,ssd1306fb-i2c";
+		reg = <0x3c>;
+		solomon,width = <128>;
+		solomon,height = <32>;
+		/* 128x32 modules usually require sequential COM config (0x02). */
+		solomon,com-seq;
+		solomon,page-offset = <0>;
+		solomon,com-offset = <0>;
+		solomon,prechargep1 = <2>;
+		solomon,prechargep2 = <2>;
+		/* Most modules need flipped COM scan to show upright. */
+		solomon,com-invdir;
+	};
+};
+
+
 // &i2c3 {
 // 	status = "okay";
 // 	pinctrl-names = "default";
@@ -243,4 +291,14 @@
 	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart3m1_xfer>;
+};
+
+/* TFT 背光固定打开（不通过软件亮度控制） */
+&gpio3 {
+	tft_bl_fixed_on: tft-bl-fixed-on {
+		gpio-hog;
+		gpios = <RK_PB4 GPIO_ACTIVE_HIGH>;
+		line-name = "TFT_BLK_FIXED_ON";
+		output-high;
+	};
 };
