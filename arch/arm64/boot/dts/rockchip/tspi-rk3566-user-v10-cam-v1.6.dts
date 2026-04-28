@@ -1,0 +1,202 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2020 Rockchip Electronics Co., Ltd.
+ *
+ */
+
+ /*********************************************************************
+ *           立创开发板不靠卖板赚钱，以培养中国工程师为己任  
+ *         泰山派软硬件资料与相关扩展板软硬件资料官网全部开源
+ *                      开发板官网：www.lckfb.com            
+ *                     立创论坛：oshwhub.com/forum           
+ *            关注B站：【立创开发板】，掌握我们的最新动态！  
+ *********************************************************************
+ * 文件名：tspi-rk3566-user-v10.dtsi
+ * 描述：用户自定义层
+ * 更新:
+ * 时间          作者           联系           说明
+ * 2023-09-13   吴才成    1378913492@qq.com   v1.0.0
+ *********************************************************************/
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/display/media-bus-format.h>
+#include <dt-bindings/pinctrl/rockchip.h>
+#include "rk3566.dtsi"
+#include <dt-bindings/display/rockchip_vop.h>
+
+
+//tspi核心配置层，这里是几乎后期不需要怎么改动
+#include "tspi-rk3566-core-v10.dtsi"
+
+/ {
+	model = "lckfb tspi V10 Board";
+	compatible = "lckfb,tspi-v10", "rockchip,rk3566";
+
+	chosen: chosen {
+		// EMMC
+		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=PARTUUID=614e0000-0000 rw rootwait";
+		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 cma=512M rw rootwait";
+
+		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 rootfstype=squashfs ro rootwait cma=512M";
+		// SD
+		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk1p4 cma=512M rw rootwait";
+	};
+
+	leds: leds {
+		compatible = "gpio-leds";
+		// 自制版配置
+		rgb_led_r: rgb-led-r {
+			gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+			default-state = "off";
+			// linux,default-trigger = "timer";
+			// linux,delay-reg = <0>;  		// 延时注册
+			// linux,blink-delay-on = <50>; 
+			// linux,blink-delay-off = <50>;
+		};
+		rgb_led_g: rgb-led-g {
+			gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+			default-state = "off";
+			// linux,default-trigger = "timer";
+			// linux,delay-reg = <0>;  		// 延时注册
+			// linux,blink-delay-on = <100>; 
+			// linux,blink-delay-off = <100>;
+		};
+		rgb_led_b: rgb-led-b {
+			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+			default-state = "off";
+			// linux,default-trigger = "timer";
+			// linux,delay-reg = <0>;  		// 延时注册
+			// linux,blink-delay-on = <200>; 
+			// linux,blink-delay-off = <200>;
+		};
+
+		rgb2_led_r: rgb2-led-r {
+			gpios = <&gpio2 RK_PC2 GPIO_ACTIVE_LOW>;
+			// linux,default-trigger = "none";
+			// default-state = "off";
+			linux,default-trigger = "timer";
+			linux,delay-reg = <0>;  		// 延时注册
+			linux,blink-delay-on = <50>; 
+			linux,blink-delay-off = <50>;
+		};
+		rgb2_led_g: rgb2-led-g {
+			gpios = <&gpio0 RK_PB0 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+			default-state = "off";
+			// linux,default-trigger = "timer";
+			// linux,delay-reg = <0>;  		// 延时注册
+			// linux,blink-delay-on = <100>; 
+			// linux,blink-delay-off = <100>;
+		};
+		rgb2_led_b: rgb2-led-b {
+			gpios = <&gpio2 RK_PC6 GPIO_ACTIVE_LOW>;
+			// linux,default-trigger = "none";
+			// default-state = "on";
+			linux,default-trigger = "timer";
+			linux,delay-reg = <0>;  		// 延时注册
+			linux,blink-delay-on = <200>; 
+			linux,blink-delay-off = <200>;
+		};
+		
+		en_gpio: en_gpio{
+			gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "none";
+			default-state = "on";
+		};
+	};
+
+		/*
+	 * INMP441 I2S 数字麦克风 → 录音声卡（Linux 下可用 arecord / PulsePipe 等直接采集）
+	 *
+	 * 硬件接线（模块丝印 → SoC I2S3 M0）:
+	 *   VDD → 3.3 V    GND → GND
+	 *   SCK → I2S3_SCLK_M0 (BCLK)    WS → I2S3_LRCK_M0 (LRCK)
+	 *   SD  → I2S3_SDI_M0（麦克风数字输出接 SoC 接收）
+	 *   L/R → GND 为左声道时隙；接 VDD 为右声道时隙
+	 *   I2S3_MCLK_M0：建议在 pinctrl 中使能（模块常见 breakout 无 MCLK 引脚时可不接芯片侧）
+	 *   I2S3_SDO_M0：纯麦克风录音可不连接
+	 *
+	 * 注意：若启用 core 中的 audiopwmout-diff（I2S3 + dig_acodec），与本节点共用 I2S3 会冲突。
+	 */
+	 inmp441_codec: inmp441-codec {
+		compatible = "rockchip,dummy-codec";
+		#sound-dai-cells = <0>;
+	};
+
+	inmp441_sound: inmp441-sound {
+		status = "okay";
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "INMP441";
+		simple-audio-card,format = "i2s";
+		simple-audio-card,mclk-fs = <256>;
+		/* SoC 输出 BCLK/LRCK/MCLK，INMP441 作 I2S slave */
+		simple-audio-card,bitclock-master = <&inmp441_cpu>;
+		simple-audio-card,frame-master = <&inmp441_cpu>;
+		inmp441_cpu: simple-audio-card,cpu {
+			sound-dai = <&i2s3_2ch>;
+		};
+		simple-audio-card,codec {
+			sound-dai = <&inmp441_codec>;
+		};
+	};
+
+};
+
+//用户三色灯
+&leds {
+	status = "okay";
+	// status = "disable";
+};
+
+
+&i2c2 {
+	status = "okay";
+	clock-frequency = <100000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c2m1_xfer>;
+};
+
+
+
+&i2c3 {
+	status = "okay";
+	clock-frequency = <100000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c3m1_xfer>;
+};
+
+/*
+ * BMI088 等 I2C 器件地址选择：A0 需为低（下拉）。
+ * 原理图网络 A0_GYRO-3B3、A0_ACCEL-3B4 -> GPIO3_PB3、GPIO3_PB4
+ */
+&gpio3 {
+	a0_gyro: a0-gyro {
+		gpio-hog;
+		gpios = <RK_PB3 GPIO_ACTIVE_HIGH>;
+		line-name = "A0_GYRO";
+		output-high;
+	};
+
+	a0_accel: a0-accel {
+		gpio-hog;
+		gpios = <RK_PB4 GPIO_ACTIVE_HIGH>;
+		line-name = "A0_ACCEL";
+		output-high;
+	};
+};
+
+/* I2S3 M0：INMP441 双工引脚组（SDO 可悬空不接） */
+&i2s3_2ch {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2s3m0_mclk
+		     &i2s3m0_sclk
+		     &i2s3m0_lrck
+		     &i2s3m0_sdi
+		     &i2s3m0_sdo>;
+	rockchip,clk-trcm = <1>;
+};
