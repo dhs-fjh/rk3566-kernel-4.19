@@ -5,11 +5,11 @@
  */
 
  /*********************************************************************
- *           立创开发板不靠卖板赚钱，以培养中国工程师为己任  
+ *           立创开发板不靠卖板赚钱，以培养中国工程师为己任
  *         泰山派软硬件资料与相关扩展板软硬件资料官网全部开源
- *                      开发板官网：www.lckfb.com            
- *                     立创论坛：oshwhub.com/forum           
- *            关注B站：【立创开发板】，掌握我们的最新动态！  
+ *                      开发板官网：www.lckfb.com
+ *                     立创论坛：oshwhub.com/forum
+ *            关注B站：【立创开发板】，掌握我们的最新动态！
  *********************************************************************
  * 文件名：tspi-rk3566-user-v10.dtsi
  * 描述：用户自定义层
@@ -30,13 +30,19 @@
 #include "tspi-rk3566-core-v10.dtsi"
 
 / {
-	model = "lckfb tspi V10 Board";
-	compatible = "lckfb,tspi-v10", "rockchip,rk3566";
+	model = "synapath stereo camera V1.5 Board";
+	compatible = "synapath,stereo-v1.5", "rockchip,rk3566";
+
+	board-info {
+		project-name = "stereo";
+		pcb_version = "1.5";
+		manufacturer = "SYNAPATH AI";
+	};
 
 	chosen: chosen {
 		// EMMC
-		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=PARTUUID=614e0000-0000 rw rootwait";
-		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 cma=512M rw rootwait";
+		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=PARTUUID=614e0000-0000 rw rootwait";
+		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 cma=512M rw rootwait";
 
 		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 rootfstype=squashfs ro rootwait cma=512M";
 		// SD
@@ -52,7 +58,7 @@
 			default-state = "off";
 			// linux,default-trigger = "timer";
 			// linux,delay-reg = <0>;  		// 延时注册
-			// linux,blink-delay-on = <50>; 
+			// linux,blink-delay-on = <50>;
 			// linux,blink-delay-off = <50>;
 		};
 		rgb_led_g: rgb-led-g {
@@ -61,7 +67,7 @@
 			default-state = "off";
 			// linux,default-trigger = "timer";
 			// linux,delay-reg = <0>;  		// 延时注册
-			// linux,blink-delay-on = <100>; 
+			// linux,blink-delay-on = <100>;
 			// linux,blink-delay-off = <100>;
 		};
 		rgb_led_b: rgb-led-b {
@@ -70,7 +76,7 @@
 			default-state = "off";
 			// linux,default-trigger = "timer";
 			// linux,delay-reg = <0>;  		// 延时注册
-			// linux,blink-delay-on = <200>; 
+			// linux,blink-delay-on = <200>;
 			// linux,blink-delay-off = <200>;
 		};
 
@@ -80,7 +86,7 @@
 			// default-state = "off";
 			linux,default-trigger = "timer";
 			linux,delay-reg = <0>;  		// 延时注册
-			linux,blink-delay-on = <50>; 
+			linux,blink-delay-on = <50>;
 			linux,blink-delay-off = <50>;
 		};
 		rgb2_led_g: rgb2-led-g {
@@ -89,7 +95,7 @@
 			// default-state = "off";
 			linux,default-trigger = "timer";
 			linux,delay-reg = <0>;  		// 延时注册
-			linux,blink-delay-on = <100>; 
+			linux,blink-delay-on = <100>;
 			linux,blink-delay-off = <100>;
 		};
 		rgb2_led_b: rgb2-led-b {
@@ -98,7 +104,7 @@
 			// default-state = "on";
 			linux,default-trigger = "timer";
 			linux,delay-reg = <0>;  		// 延时注册
-			linux,blink-delay-on = <200>; 
+			linux,blink-delay-on = <200>;
 			linux,blink-delay-off = <200>;
 		};
 

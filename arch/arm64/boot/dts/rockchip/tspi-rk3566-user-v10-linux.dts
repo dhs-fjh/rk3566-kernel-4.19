@@ -5,11 +5,11 @@
  */
 
  /*********************************************************************
- *           立创开发板不靠卖板赚钱，以培养中国工程师为己任  
+ *           立创开发板不靠卖板赚钱，以培养中国工程师为己任
  *         泰山派软硬件资料与相关扩展板软硬件资料官网全部开源
- *                      开发板官网：www.lckfb.com            
- *                     立创论坛：oshwhub.com/forum           
- *            关注B站：【立创开发板】，掌握我们的最新动态！  
+ *                      开发板官网：www.lckfb.com
+ *                     立创论坛：oshwhub.com/forum
+ *            关注B站：【立创开发板】，掌握我们的最新动态！
  *********************************************************************
  * 文件名：tspi-rk3566-user-v10.dtsi
  * 描述：用户自定义层
@@ -30,8 +30,14 @@
 #include "tspi-rk3566-core-v10.dtsi"
 
 / {
-	model = "lckfb tspi V10 Board";
-	compatible = "lckfb,tspi-v10", "rockchip,rk3566";
+	model = "synapath stereo camera Linux Board";
+	compatible = "synapath,stereo-linux", "rockchip,rk3566";
+
+	board-info {
+		project-name = "stereo";
+		pcb_version = "null";
+		manufacturer = "SYNAPATH AI";
+	};
 
 	chosen: chosen {
 		// EMMC
@@ -70,7 +76,7 @@
 			// default-state = "on";
 			linux,default-trigger = "timer";
 			linux,delay-reg = <0>;  		// 延时注册
-			linux,blink-delay-on = <1000>; 
+			linux,blink-delay-on = <1000>;
 			linux,blink-delay-off = <1000>;
 
 		};
@@ -80,7 +86,7 @@
 			// default-state = "on";
 			linux,default-trigger = "timer";
 			linux,delay-reg = <0>;  		// 延时注册
-			linux,blink-delay-on = <2000>; 
+			linux,blink-delay-on = <2000>;
 			linux,blink-delay-off = <2000>;
 		};
 	};
@@ -153,40 +159,30 @@
 
 
 
-// &spi3 {
-// 	status = "okay";
+&spi3 {
+	status = "okay";
 
-// 	pinctrl-names = "default";
-// 	pinctrl-0 = <&spi3m1_pins &tft_dc &tft_bl &tft_rst>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi3m1_pins>;
 
-// 	num-cs = <2>;
-// 	// 泰山派
-// 	cs-gpios = <
-// 			&gpio3 RK_PA4 GPIO_ACTIVE_LOW   // CS0
-// 			&gpio3 RK_PA5 GPIO_ACTIVE_LOW   // CS1
-// 	>;
+	num-cs = <2>;
+	// 泰山派
+	cs-gpios = <
+			&gpio3 RK_PA4 GPIO_ACTIVE_LOW   // CS0
+			&gpio3 RK_PA5 GPIO_ACTIVE_LOW   // CS1
+	>;
+	spidev@0 {
+		compatible = "spidev";
+		reg = <0>;                     // 对应 CS1
+		spi-max-frequency = <500000>;
+};
 
-// 	st7789v@0 {
-// 			compatible = "sitronix,st7789v";
-// 			reg = <0>;                     // 对应 CS0
-// 			spi-max-frequency = <1000000>;
-// 			width = <240>;
-// 			height = <240>;
-// 			rotate = <0>;
-// 			bgr;
-// 			fps = <30>;
-// 			buswidth = <8>;
-// 			dc-gpios = <&gpio3 RK_PB3 GPIO_ACTIVE_HIGH>;
-// 			reset-gpios = <&gpio3 RK_PC3 GPIO_ACTIVE_HIGH>;
-// 			//led-gpios = <&gpio3 RK_PB4 GPIO_ACTIVE_HIGH>;
-// 	};
-
-// 	spidev@1 {
-// 			compatible = "spidev";
-// 			reg = <1>;                     // 对应 CS1
-// 			spi-max-frequency = <500000>;
-// 	};
-// };
+	spidev@1 {
+			compatible = "spidev";
+			reg = <1>;                     // 对应 CS1
+			spi-max-frequency = <500000>;
+	};
+};
 
 
 // &spi1 {
