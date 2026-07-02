@@ -1,0 +1,164 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2020 Rockchip Electronics Co., Ltd.
+ *
+ */
+
+ /*********************************************************************
+ *           立创开发板不靠卖板赚钱，以培养中国工程师为己任
+ *         泰山派软硬件资料与相关扩展板软硬件资料官网全部开源
+ *                      开发板官网：www.lckfb.com
+ *                     立创论坛：oshwhub.com/forum
+ *            关注B站：【立创开发板】，掌握我们的最新动态！
+ *********************************************************************
+ * 文件名：tspi-rk3566-user-v10.dtsi
+ * 描述：用户自定义层
+ * 更新:
+ * 时间          作者           联系           说明
+ * 2023-09-13   吴才成    1378913492@qq.com   v1.0.0
+ *********************************************************************/
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/display/media-bus-format.h>
+#include <dt-bindings/pinctrl/rockchip.h>
+#include "rk3566.dtsi"
+#include <dt-bindings/display/rockchip_vop.h>
+
+
+//tspi核心配置层，这里是几乎后期不需要怎么改动
+#include "tspi-rk3566-core-v10.dtsi"
+
+/ {
+	model = "synapath stereo camera V1.4 Board";
+	compatible = "synapath,stereo-v1.4", "rockchip,rk3566";
+
+	board-info {
+		project-name = "stereo";
+		pcb_version = "1.4";
+		manufacturer = "SYNAPATH AI";
+	};
+
+	chosen: chosen {
+		// EMMC
+		bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=PARTUUID=614e0000-0000 rw rootwait";
+		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=PARTLABEL=rootfs cma=512M rw rootwait";
+
+		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk0p4 rootfstype=squashfs ro rootwait cma=512M";
+		// SD
+		// bootargs = "earlycon=uart8250,mmio32,0xfe660000 console=ttyFIQ0 root=/dev/mmcblk1p4 cma=512M rw rootwait";
+	};
+
+	leds: leds {
+		compatible = "gpio-leds";
+		// 自制版配置
+		rgb_led_r: rgb-led-r {
+			gpios = <&gpio1 RK_PB1 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+			// default-state = "on";
+			// linux,default-trigger = "timer";
+			// linux,delay-reg = <0>;  		// 延时注册
+			// linux,blink-delay-on = <500>;
+			// linux,blink-delay-off = <500>;
+		};
+		rgb_led_b: rgb-led-g {
+			gpios = <&gpio1 RK_PA6 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+			// default-state = "on";
+			// linux,default-trigger = "timer";
+			// linux,delay-reg = <0>;  		// 延时注册
+			// linux,blink-delay-on = <2000>;
+			// linux,blink-delay-off = <2000>;
+		};
+		rgb_led_g: rgb-led-b {
+			gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
+			// default-state = "on";
+			// linux,default-trigger = "timer";
+			// linux,delay-reg = <0>;  		// 延时注册
+			// linux,blink-delay-on = <1000>;
+			// linux,blink-delay-off = <1000>;
+		};
+
+
+		rgb2_led_r: rgb2-led-r {
+			gpios = <&gpio1 RK_PA5 GPIO_ACTIVE_LOW>;
+			// linux,default-trigger = "none";
+			// default-state = "off";
+			linux,default-trigger = "timer";
+			linux,delay-reg = <0>;  		// 延时注册
+			linux,blink-delay-on = <100>;
+			linux,blink-delay-off = <100>;
+		};
+		rgb2_led_g: rgb2-led-g {
+			gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_LOW>;
+			// linux,default-trigger = "none";
+			// default-state = "off";
+			linux,default-trigger = "timer";
+			linux,delay-reg = <0>;  		// 延时注册
+			linux,blink-delay-on = <200>;
+			linux,blink-delay-off = <200>;
+		};
+		rgb2_led_b: rgb2-led-b {
+			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "none";
+			default-state = "off";
+			// linux,default-trigger = "timer";
+			// linux,delay-reg = <0>;  		// 延时注册
+			// linux,blink-delay-on = <400>;
+			// linux,blink-delay-off = <400>;
+		};
+		ray: ray {
+			gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "none";
+			default-state = "off";
+		};
+
+	};
+
+	/*
+	 * GPIO1_B3 用户按键，用户态可通过 /dev/input/eventX 监听。
+	 */
+	gpio_keys: gpio-keys {
+		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		pinctrl-0 = <&gpio1b3_key_pin>;
+
+		user_key: user-key {
+			label = "user-key";
+			gpios = <&gpio1 RK_PB3 GPIO_ACTIVE_LOW>;
+			linux,code = <183>; /* KEY_F13 */
+			debounce-interval = <10>;
+			wakeup-source;
+		};
+	};
+
+};
+
+//用户三色灯
+&leds {
+	status = "okay";
+	// status = "disable";
+};
+
+&wireless_bluetooth {
+	status = "disabled";
+};
+
+&pinctrl {
+	user-key-pins {
+		gpio1b3_key_pin: gpio1b3-key-pin {
+			rockchip,pins = <1 RK_PB3 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+	};
+};
+
+&i2s1_8ch {
+	/*
+	 * GPIO1_B3 is i2s1m0_sdi0 by default in core dtsi. This board uses the
+	 * pin as user-key, so keep I2S1 TX pins only and release SDI0.
+	 */
+	pinctrl-0 = <&i2s1m0_sclktx
+		     &i2s1m0_lrcktx
+		     &i2s1m0_sdo0>;
+};
