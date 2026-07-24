@@ -82,16 +82,7 @@
 
 
 		rgb2_led_r: rgb2-led-r {
-			gpios = <&gpio1 RK_PA5 GPIO_ACTIVE_LOW>;
-			// linux,default-trigger = "none";
-			// default-state = "off";
-			linux,default-trigger = "timer";
-			linux,delay-reg = <0>;  		// 延时注册
-			linux,blink-delay-on = <100>;
-			linux,blink-delay-off = <100>;
-		};
-		rgb2_led_g: rgb2-led-g {
-			gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_LOW>;
+			gpios = <&gpio1 RK_PA5 GPIO_ACTIVE_HIGH>;
 			// linux,default-trigger = "none";
 			// default-state = "off";
 			linux,default-trigger = "timer";
@@ -99,14 +90,23 @@
 			linux,blink-delay-on = <200>;
 			linux,blink-delay-off = <200>;
 		};
+		rgb2_led_g: rgb2-led-g {
+			gpios = <&gpio1 RK_PA7 GPIO_ACTIVE_HIGH>;
+			// linux,default-trigger = "none";
+			// default-state = "off";
+			linux,default-trigger = "timer";
+			linux,delay-reg = <0>;  		// 延时注册
+			linux,blink-delay-on = <400>;
+			linux,blink-delay-off = <400>;
+		};
 		rgb2_led_b: rgb2-led-b {
 			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_HIGH>;
-			linux,default-trigger = "none";
-			default-state = "off";
-			// linux,default-trigger = "timer";
-			// linux,delay-reg = <0>;  		// 延时注册
-			// linux,blink-delay-on = <400>;
-			// linux,blink-delay-off = <400>;
+			// linux,default-trigger = "none";
+			// default-state = "off";
+			linux,default-trigger = "timer";
+			linux,delay-reg = <0>;  		// 延时注册
+			linux,blink-delay-on = <800>;
+			linux,blink-delay-off = <800>;
 		};
 		ray: ray {
 			gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_HIGH>;
@@ -153,12 +153,18 @@
 	};
 };
 
+/*
+ * I2S1 uses GPIO1_A5 (lrcktx) and GPIO1_A7 (sdo0), same pins as rgb2 red/green.
+ * Disable I2S and its audio card so rgb2 LEDs can be driven as GPIO.
+ */
 &i2s1_8ch {
-	/*
-	 * GPIO1_B3 is i2s1m0_sdi0 by default in core dtsi. This board uses the
-	 * pin as user-key, so keep I2S1 TX pins only and release SDI0.
-	 */
-	pinctrl-0 = <&i2s1m0_sclktx
-		     &i2s1m0_lrcktx
-		     &i2s1m0_sdo0>;
+	status = "disabled";
+};
+
+&rk809_sound {
+	status = "disabled";
+};
+
+&rk809_codec {
+	status = "disabled";
 };
