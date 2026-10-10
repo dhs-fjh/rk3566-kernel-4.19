@@ -61,7 +61,7 @@
 			// linux,blink-delay-on = <50>;
 			// linux,blink-delay-off = <50>;
 		};
-		rgb_led_g: rgb-led-g {
+		rgb_led_b: rgb-led-b {
 			gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
 			linux,default-trigger = "none";
 			default-state = "off";
@@ -70,7 +70,7 @@
 			// linux,blink-delay-on = <100>;
 			// linux,blink-delay-off = <100>;
 		};
-		rgb_led_b: rgb-led-b {
+		rgb_led_g: rgb-led-g {
 			gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
 			linux,default-trigger = "none";
 			default-state = "off";

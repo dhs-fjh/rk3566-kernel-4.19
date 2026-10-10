@@ -111,10 +111,49 @@
 
 	};
 
+	/*
+	 * GPIO1_B3 用户按键，用户态可通过 /dev/input/eventX 监听。
+	 */
+	gpio_keys: gpio-keys {
+		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		pinctrl-0 = <&gpio1b3_key_pin>;
+
+		user_key: user-key {
+			label = "user-key";
+			gpios = <&gpio1 RK_PB3 GPIO_ACTIVE_LOW>;
+			linux,code = <183>; /* KEY_F13 */
+			debounce-interval = <10>;
+			wakeup-source;
+		};
+	};
+
 };
 
 //用户三色灯
 &leds {
 	status = "okay";
 	// status = "disable";
+};
+
+&wireless_bluetooth {
+	status = "disabled";
+};
+
+&pinctrl {
+	user-key-pins {
+		gpio1b3_key_pin: gpio1b3-key-pin {
+			rockchip,pins = <1 RK_PB3 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+	};
+};
+
+&i2s1_8ch {
+	/*
+	 * GPIO1_B3 is i2s1m0_sdi0 by default in core dtsi. This board uses the
+	 * pin as user-key, so keep I2S1 TX pins only and release SDI0.
+	 */
+	pinctrl-0 = <&i2s1m0_sclktx
+		     &i2s1m0_lrcktx
+		     &i2s1m0_sdo0>;
 };
